@@ -1,9 +1,10 @@
-import React from "react";
+// import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import "../styles/LoginForm.scss";
 
-let schema = yup
+const schema = yup
   .object({
     email: yup
       .string()
@@ -14,17 +15,24 @@ let schema = yup
       .required("Enter password")
       .min(8, "You password must conrains min 8 characters")
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
-        "You password must contain: "
+        /^(?=.*[A-Z])/,
+        "You password must contain at least one uppercase character"
+      )
+      .matches(
+        /^(?=.*[a-z])/,
+        "You password must contain at least one lowercase character"
+      )
+      .matches(
+        /^(?=.*[0-9])/,
+        "You password must contain at least one digit character"
+      )
+      .matches(
+        /^(?=.*[!@#$%^&*-])/,
+        "You password must contain at least one special character (!@#$%^&*)"
       ),
   })
   .required();
 
-// schema
-//   .validate({ email: "artmarket81@gmail.con", password: "Qwerty@12345" })
-//   .catch((err) => {
-//     console.log(err.name);
-//   });
 interface IFormInputs {
   email: string;
   password: string;
@@ -34,39 +42,35 @@ const LoginForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
+    reset,
+    formState: { errors, isValid },
   } = useForm<IFormInputs>({
     mode: "all",
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data: IFormInputs) => console.log(data);
-
-  console.log(watch("email"));
+  const onSubmit = (data: IFormInputs) => {
+    console.log(data);
+    reset();
+  };
 
   return (
-    <div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        // style={{ display: "flex", justifyContent: "center" }}
-      >
+    <div className="login-form">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <h2>Login:</h2>
         <label>
-          Email:
-          <input {...register("email", { required: true })} />
+          <p>Email:</p>
+          <input type="text" {...register("email")} />
         </label>
+
         {errors?.email && <p>{errors?.email?.message || "Error!"}</p>}
 
         <label>
-          Password:
-          <input
-            {...register("password", {
-              required: true,
-            })}
-          />
+          <p>Password:</p>
+          <input type="password" {...register("password")} />
         </label>
         {errors?.password && <p>{errors?.password?.message || "Error!"}</p>}
 
-        <input type="submit" />
+        <input type="submit" value="Login" disabled={!isValid} />
       </form>
     </div>
   );
