@@ -6,30 +6,8 @@ import "../styles/LoginForm.scss";
 
 const schema = yup
   .object({
-    email: yup
-      .string()
-      .required("Enter Email")
-      .email("Please, enter a valid email"),
-    password: yup
-      .string()
-      .required("Enter password")
-      .min(8, "You password must conrains min 8 characters")
-      .matches(
-        /^(?=.*[A-Z])/,
-        "You password must contain at least one uppercase character"
-      )
-      .matches(
-        /^(?=.*[a-z])/,
-        "You password must contain at least one lowercase character"
-      )
-      .matches(
-        /^(?=.*[0-9])/,
-        "You password must contain at least one digit character"
-      )
-      .matches(
-        /^(?=.*[!@#$%^&*-])/,
-        "You password must contain at least one special character (!@#$%^&*)"
-      ),
+    email: yup.string().required("Please, enter a valid email").email(),
+    password: yup.string().required("Enter password"),
   })
   .required();
 
@@ -38,18 +16,33 @@ interface IFormInputs {
   password: string;
 }
 
+const loginData = {
+  email: "test@gmail.com",
+  password: "qwert-11",
+};
+
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<IFormInputs>({
-    mode: "all",
+    mode: "onSubmit",
     resolver: yupResolver(schema),
   });
+
   const onSubmit = (data: IFormInputs) => {
-    console.log(data);
+    if (
+      data.email === loginData.email &&
+      data.password === loginData.password
+    ) {
+      console.log(data);
+      alert(JSON.stringify(data));
+    } else {
+      console.log("Wrong password or email");
+      alert("Wrong password or email");
+    }
     reset();
   };
 
@@ -70,7 +63,7 @@ const LoginForm = () => {
         </label>
         {errors?.password && <p>{errors?.password?.message || "Error!"}</p>}
 
-        <input type="submit" value="Login" disabled={!isValid} />
+        <input type="submit" value="Login" />
       </form>
     </div>
   );
