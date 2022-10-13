@@ -6,7 +6,10 @@ import "../styles/LoginForm.scss";
 
 const schema = yup
   .object({
-    email: yup.string().required("Please, enter a valid email").email(),
+    email: yup
+      .string()
+      .required("Please, enter a valid email")
+      .email("Please, enter a valid email"),
     password: yup.string().required("Enter password"),
   })
   .required();
@@ -18,7 +21,7 @@ interface IFormInputs {
 
 const loginData = {
   email: "test@gmail.com",
-  password: "qwert-11",
+  password: "test",
 };
 
 const LoginForm = () => {
@@ -38,32 +41,40 @@ const LoginForm = () => {
       data.password === loginData.password
     ) {
       console.log(data);
-      alert(JSON.stringify(data));
+      alert(`Welcome! 
+      ${JSON.stringify(data)}`);
     } else {
       console.log("Wrong password or email");
-      alert("Wrong password or email");
+      alert(
+        `Wrong password or email! 
+        (Test email: "test@gmail.com", password: "test")`
+      );
     }
     reset();
   };
 
   return (
-    <div className="login-form">
+    <div className="wrapper">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h2>Login:</h2>
-        <label>
-          <p>Email:</p>
-          <input type="text" {...register("email")} />
-        </label>
+        <h2>Hi, you can login here</h2>
+        <label>Email:</label>
+        <input type="text" {...register("email")} />
 
-        {errors?.email && <p>{errors?.email?.message || "Error!"}</p>}
+        <p>
+          {errors?.email && <span>{errors?.email?.message || "Error!"}</span>}
+        </p>
 
-        <label>
-          <p>Password:</p>
-          <input type="password" {...register("password")} />
-        </label>
-        {errors?.password && <p>{errors?.password?.message || "Error!"}</p>}
+        <label>Password:</label>
+        <input type="password" {...register("password")} />
+        <p>
+          {errors?.password && (
+            <span>{errors?.password?.message || "Error!"}</span>
+          )}
+        </p>
 
-        <input type="submit" value="Login" />
+        <div className="button">
+          <input className="button-login" type="submit" value="Login" />
+        </div>
       </form>
     </div>
   );
